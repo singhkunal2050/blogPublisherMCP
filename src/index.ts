@@ -245,6 +245,8 @@ class BlogPublisherServer {
       frontmatter.push(`description: ${metadata.description}`);
     }
     
+    metadata.tags = [...(metadata.tags || []), 'post'];
+    
     if (metadata.tags && metadata.tags.length > 0) {
       frontmatter.push(`tags:`);
       metadata.tags.forEach(tag => {
