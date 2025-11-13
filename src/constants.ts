@@ -1,3 +1,4 @@
+// MCP Tool definitions: each tool needs name, description, and JSON schema for inputs
 export const TOOLS = [
   {
     name: "publish_blog_post",

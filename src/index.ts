@@ -16,6 +16,7 @@ class BlogPublisherServer {
   private github: GitHubClient;
 
   constructor() {
+    // MCP Server initialization with metadata
     this.server = new Server({
       name: "blog-publisher",
       version: "1.0.0",
@@ -37,10 +38,12 @@ class BlogPublisherServer {
   }
 
   private setupToolHandlers() {
+    // MCP: Handle ListTools request - tells clients what tools are available
     this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
       tools: TOOLS,
     }));
 
+    // MCP: Handle CallTool request - routes tool calls to appropriate handlers
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       switch (request.params.name) {
         case "publish_blog_post":
@@ -84,6 +87,7 @@ class BlogPublisherServer {
         `Add new blog post: ${title}`
       );
 
+      // MCP: Tool response must have a 'content' array with type/text objects
       return {
         content: [
           {
@@ -101,6 +105,7 @@ The build should be triggered automatically.`,
       if (error instanceof McpError) {
         throw error;
       }
+      // MCP: Use McpError for consistent error handling across the protocol
       throw new McpError(
         ErrorCode.InternalError,
         `Failed to publish blog post: ${error.response?.data?.message || error.message}`
@@ -190,8 +195,10 @@ The build should be triggered automatically.`,
   }
 
   async run() {
+    // MCP: Use stdio transport for communication with the client
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
+    // Log to stderr to avoid polluting stdio channel
     console.error("Blog Publisher MCP server running on stdio");
   }
 }

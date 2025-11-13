@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { GitHubFile, GitHubCreateFileResponse } from './types.js';
 
+// Wrapper for GitHub API operations
 export class GitHubClient {
   private client: AxiosInstance;
   private repoOwner: string;

@@ -1,5 +1,6 @@
 import { BlogPostMetadata } from './types.js';
 
+// Convert blog title to URL-friendly filename
 export function generateFilename(title: string): string {
   return title
     .toLowerCase()
@@ -50,6 +51,7 @@ export function formatFrontmatter(metadata: BlogPostMetadata): string {
   return frontmatter.join('\n');
 }
 
+// Combine YAML frontmatter with markdown content
 export function createBlogPostContent(metadata: BlogPostMetadata, content: string): string {
   const frontmatter = formatFrontmatter(metadata);
   return frontmatter + content;
