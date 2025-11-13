@@ -48,6 +48,20 @@ export const TOOLS = [
     },
   },
   {
+    name: "get_blog_post",
+    description: "Read the content of a specific blog post",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filename: {
+          type: "string",
+          description: "The filename of the blog post to read (with .md extension)",
+        },
+      },
+      required: ["filename"],
+    },
+  },
+  {
     name: "list_blog_posts",
     description: "List existing blog posts in the repository",
     inputSchema: {

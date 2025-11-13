@@ -8,7 +8,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubClient } from './github.js';
 import { generateFilename, createBlogPostContent } from './blog-utils.js';
-import { PublishBlogPostArgs, UpdateBlogPostArgs, DeleteBlogPostArgs } from './types.js';
+import { PublishBlogPostArgs, UpdateBlogPostArgs, DeleteBlogPostArgs, GetBlogPostArgs } from './types.js';
 import { TOOLS } from './constants.js';
 
 class BlogPublisherServer {
@@ -48,6 +48,8 @@ class BlogPublisherServer {
       switch (request.params.name) {
         case "publish_blog_post":
           return await this.publishBlogPost(request.params.arguments as unknown as PublishBlogPostArgs);
+        case "get_blog_post":
+          return await this.getBlogPost(request.params.arguments as unknown as GetBlogPostArgs);
         case "list_blog_posts":
           return await this.listBlogPosts();
         case "update_blog_post":
@@ -111,6 +113,48 @@ The build should be triggered automatically.`,
       throw new McpError(
         ErrorCode.InternalError,
         `Failed to publish blog post: ${error.response?.data?.message || error.message}`
+      );
+    }
+  }
+
+  private async getBlogPost(args: GetBlogPostArgs) {
+    try {
+      const { filename } = args;
+      const blogPath = `src/blog/${filename}`;
+
+      const file = await this.github.getFile(blogPath);
+      
+      // Decode base64 content
+      if (!file.content) {
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Blog post "${filename}" has no content`
+        );
+      }
+      
+      const content = Buffer.from(file.content, 'base64').toString('utf-8');
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `# Blog Post: ${filename}\n\n${content}`,
+          },
+        ],
+      };
+    } catch (error: any) {
+      if (error instanceof McpError) {
+        throw error;
+      }
+      if (error.response?.status === 404) {
+        throw new McpError(
+          ErrorCode.InvalidRequest,
+          `Blog post "${args.filename}" not found`
+        );
+      }
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Failed to get blog post: ${error.response?.data?.message || error.message}`
       );
     }
   }

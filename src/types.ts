@@ -8,6 +8,8 @@ export interface GitHubFile {
   git_url: string;
   download_url: string;
   type: string;
+  content?: string; // base64 encoded content
+  encoding?: string; // encoding type (e.g., "base64")
 }
 
 export interface GitHubCreateFileResponse {
@@ -77,6 +79,10 @@ export interface UpdateBlogPostArgs {
 }
 
 export interface DeleteBlogPostArgs {
+  filename: string;
+}
+
+export interface GetBlogPostArgs {
   filename: string;
 }
 
