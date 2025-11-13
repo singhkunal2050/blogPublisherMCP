@@ -150,3 +150,61 @@ npm run dev
 - Category/folder organization
 - Bulk operations
 - Preview generation
+
+
+### Diagram
+
+graph TB
+    subgraph "Client (Claude/AI Assistant)"
+        A[Claude Desktop/AI Client]
+    end
+
+    subgraph "Blog Publisher MCP Server"
+        B[MCP Server<br/>index.ts]
+        C[GitHub Client<br/>github.ts]
+        D[Blog Utils<br/>blog-utils.ts]
+        
+        B -->|Uses| C
+        B -->|Uses| D
+        
+        subgraph "Available Tools"
+            T1[publish_blog_post]
+            T2[list_blog_posts]
+            T3[update_blog_post]
+            T4[delete_blog_post]
+        end
+        
+        B -.->|Provides| T1
+        B -.->|Provides| T2
+        B -.->|Provides| T3
+        B -.->|Provides| T4
+    end
+
+    subgraph "GitHub Repository"
+        E[(GitHub API)]
+        F[Blog Posts<br/>src/blog/*.md]
+    end
+
+    subgraph "Utilities"
+        D1[generateFilename]
+        D2[formatFrontmatter]
+        D3[createBlogPostContent]
+        
+        D -->|Contains| D1
+        D -->|Contains| D2
+        D -->|Contains| D3
+    end
+
+    A <-->|MCP Protocol<br/>stdio| B
+    C <-->|REST API<br/>Bearer Token| E
+    E <-->|CRUD Operations| F
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#ffe1f5
+    style D fill:#e1ffe1
+    style E fill:#f5e1ff
+    style F fill:#ffe1e1
+    
+    classDef toolStyle fill:#ffd700,stroke:#333,stroke-width:2px
+    class T1,T2,T3,T4 toolStyle
