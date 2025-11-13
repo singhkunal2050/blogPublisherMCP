@@ -102,5 +102,19 @@ export const TOOLS = [
       required: ["filename"],
     },
   },
+  {
+    name: "delete_blog_post",
+    description: "Delete an existing blog post from the repository",
+    inputSchema: {
+      type: "object",
+      properties: {
+        filename: {
+          type: "string",
+          description: "The filename of the blog post to delete (with .md extension)",
+        },
+      },
+      required: ["filename"],
+    },
+  },
 ] as const;
 

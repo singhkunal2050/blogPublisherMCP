@@ -8,7 +8,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubClient } from './github.js';
 import { generateFilename, createBlogPostContent } from './blog-utils.js';
-import { PublishBlogPostArgs, UpdateBlogPostArgs } from './types.js';
+import { PublishBlogPostArgs, UpdateBlogPostArgs, DeleteBlogPostArgs } from './types.js';
 import { TOOLS } from './constants.js';
 
 class BlogPublisherServer {
@@ -52,6 +52,8 @@ class BlogPublisherServer {
           return await this.listBlogPosts();
         case "update_blog_post":
           return await this.updateBlogPost(request.params.arguments as unknown as UpdateBlogPostArgs);
+        case "delete_blog_post":
+          return await this.deleteBlogPost(request.params.arguments as unknown as DeleteBlogPostArgs);
         default:
           throw new McpError(
             ErrorCode.MethodNotFound,
@@ -175,7 +177,7 @@ The build should be triggered automatically.`,
           {
             type: "text",
             text: `Successfully updated blog post "${filename}".
-
+            
 Commit SHA: ${response.commit.sha}
 File URL: ${response.content.html_url}
 
@@ -190,6 +192,40 @@ The build should be triggered automatically.`,
       throw new McpError(
         ErrorCode.InternalError,
         `Failed to update blog post: ${error.response?.data?.message || error.message}`
+      );
+    }
+  }
+
+  private async deleteBlogPost(args: DeleteBlogPostArgs) {
+    try {
+      const { filename } = args;
+      const blogPath = `src/blog/${filename}`;
+
+      const existingFile = await this.github.getFile(blogPath);
+
+      await this.github.deleteFile(
+        blogPath,
+        `Delete blog post: ${filename}`,
+        existingFile.sha
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Successfully deleted blog post "${filename}".
+
+The build should be triggered automatically.`,
+          },
+        ],
+      };
+    } catch (error: any) {
+      if (error instanceof McpError) {
+        throw error;
+      }
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Failed to delete blog post: ${error.response?.data?.message || error.message}`
       );
     }
   }

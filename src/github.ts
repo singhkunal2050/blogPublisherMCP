@@ -76,5 +76,17 @@ export class GitHubClient {
     );
     return response.data;
   }
+
+  async deleteFile(path: string, message: string, sha: string): Promise<void> {
+    await this.client.delete(
+      `/repos/${this.repoOwner}/${this.repoName}/contents/${path}`,
+      {
+        data: {
+          message,
+          sha,
+        },
+      }
+    );
+  }
 }
 

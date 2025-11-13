@@ -76,3 +76,7 @@ export interface UpdateBlogPostArgs {
   readTime?: string;
 }
 
+export interface DeleteBlogPostArgs {
+  filename: string;
+}
+
