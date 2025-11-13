@@ -152,8 +152,9 @@ npm run dev
 - Preview generation
 
 
-### Diagram
+## Architecture Diagram
 
+```mermaid
 graph TB
     subgraph "Client (Claude/AI Assistant)"
         A[Claude Desktop/AI Client]
@@ -208,3 +209,4 @@ graph TB
     
     classDef toolStyle fill:#ffd700,stroke:#333,stroke-width:2px
     class T1,T2,T3,T4 toolStyle
+```
